@@ -13,6 +13,8 @@ Route::get('sign-out', [\App\Http\Controllers\LoginController::class, 'logOut'])
 //Prfix/awalan
 Route::prefix('admin')->group(function () {
     Route::resource('dashboard', \App\Http\Controllers\ADMIN\DashboardController::class);
+    Route::resource('user', \App\Http\Controllers\ADMIN\UserController::class);
+    Route::resource('blog', \App\Http\Controllers\ADMIN\BlogController::class);
 });
 
 Route::get('belajar', [\App\Http\Controllers\BelajarController::class, 'index']);
