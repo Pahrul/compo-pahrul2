@@ -13,6 +13,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
+                        <th>Photo</th>
                         <th>Category</th>
                         <th>Title</th>
                         <th>Content</th>
@@ -25,6 +26,9 @@
 
                     <tr>
                         <td>{{ $key +1 }}</td>
+                        <td>
+                            <img src="{{ asset('storage/'.$data->photo) }}" alt="" width="100" >
+                        </td>
                         <td>{{ $data->category->name }}</td>
                         <td>{{ $data->title }}</td>
                         <td>{{ $data->content }}</td>

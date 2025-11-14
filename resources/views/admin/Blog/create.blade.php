@@ -9,13 +9,13 @@
 
 <div class="card-body">
 
-    <form action="{{ route('blog.store') }}" method="POST">
+    <form action="{{ route('blog.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
         <label for="" class="form-label">
             Category Blog
         </label>
-        <select type="text" name="category_id" class="form-control" >
+        <select type="text" name="category_id" class="form-control"  >
             <option value="">Choose one</option>
             @foreach ($categories as $category )
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -36,6 +36,23 @@
         </label>
         <textarea name="content" id="summernote" cols="30" rows="10" class="form-control" >
         </textarea>
+        </div>
+
+        <div class="mb-3">
+        <label for="" class="form-label">
+            Photo
+        </label>
+        <input type="file" name="photo"  >
+        </div>
+
+        <div class="mb-3">
+        <label for="" class="form-label">
+            Status
+        </label>
+        <select  name="status" id=""  class="form-control">
+            <option value="1">Publish</option>
+            <option value="0">Draft</option>
+        </select>
         </div>
 
 

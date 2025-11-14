@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Blog;
 use App\Models\Categories;
+use App\Models\categories as ModelsCategories;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
@@ -40,14 +42,23 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         //query insert
-        Blog::create([
+        $data = [
             'category_id' => $request->category_id,
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'content' => $request->content,
-            // toast('Your Post as been submited!', 'success');
-        ]);
-        Alert::success('Success Title', 'Success Message');
+            'status' => $request->status,
+            'writter' => auth()->user->name,
+
+        ];
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo')->store('blog' . 'public');
+            $data['photo'] = $photo;
+        }
+
+        Blog::create($data);
+        Alert::success('Success Title', 'Success Create new Blog Succes');
         return redirect()->to('admin/blog');
     }
 
@@ -68,8 +79,9 @@ class BlogController extends Controller
     {
         //
         $edit  = Blog::find($id);
+        $categories = Categories::get();
         $title = "Edit Blog";
-        return view('admin.blog.edit', compact('edit',));
+        return view('admin.blog.edit', compact('edit', 'title', 'categories'));
     }
 
     /**
@@ -79,12 +91,28 @@ class BlogController extends Controller
     {
         //
         $update = Blog::find($id);
-        $update->category_id = $request->category_id;
-        $update->titte       = $request->title;
-        $update->content     = $request->content;
-        $update->slug        = $Str::slug($request->title);
 
-        $update->save();
+        $data = [
+            'category_id' => $request->category_id,
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'content' => $request->content,
+            'status' => $request->status,
+            'writter' => auth()->user()->name,
+
+        ];
+
+        if ($request->hasFile('photo')) {
+            if ($update->photo) {
+                File::delete(public_path('storage/' . $update->photo));
+            }
+            $photo = $request->file('photo')->store('blog', 'public');
+            $data['photo'] = $photo;
+        }
+
+
+        $update->update($data);
+        Alert::success('Success Title', 'User berhasil di edit');
         return redirect()->to('admin/blog'); //redirect ke Blog
     }
 
@@ -95,8 +123,9 @@ class BlogController extends Controller
     {
         //
 
-        Blog::find($id)->delete();
-        Alert::success('Success Title', 'User berhasil di hapus');
+        $delete = Blog::find($id)->delete();
+        File::delete(public_path('storage/' . $delete->photo));
+        Alert::success('Success Title', 'Delete berhasil');
         return redirect()->to('admin/blog');
     }
 }
